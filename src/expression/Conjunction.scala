@@ -11,7 +11,7 @@ case class Conjunction(val operands: List[Expression]) extends SpecialForm {
     var isTrue = true
     var index = 0
     while (isTrue && index < operands.length){
-      if (operands(index).isInstanceOf[Boole]) {
+      if (operands(index).execute(env).isInstanceOf[Boole]) {
         //if false, always false. return false 
         if (operands(index).execute(env) == Boole(false)) isTrue = false
         index = index + 1

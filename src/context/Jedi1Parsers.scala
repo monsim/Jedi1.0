@@ -98,7 +98,7 @@ class Jedi1Parsers extends RegexParsers {
  }
  
  // integer ::= 0|(\+|-)?[1-9][0-9]*
- def integer: Parser[Integer] = """0|(\+|-)?[1-9][0-9]""".r ^^ {     //same for real, boole and identifier    
+ def integer: Parser[Integer] = """0|(\+|-)?[1-9][0-9]*""".r ^^ {     //same for real, boole and identifier    
    case digits => Integer(digits.toInt)      
  }
  
@@ -108,9 +108,8 @@ class Jedi1Parsers extends RegexParsers {
  }
  
  // boole ::= true | false
- def boole: Parser[Boole] = "true | false".r ^^ {    //needs to be in quotes??    
-   case "true" => Boole(true)
-   case _ => Boole(false)
+ def boole: Parser[Boole] = """true|false""".r ^^ {    //needs to be in quotes??    
+   case bool => Boole(bool.toBoolean)
  }
  
  // identifier ::= [a-zA-Z][a-zA-Z0-9]*
@@ -124,10 +123,10 @@ class Jedi1Parsers extends RegexParsers {
  }
  
  // operands ::= "(" ~ (expression ~ ("," ~ expression)*)? ~ ")"
- //"(" ~ (expression ~ opt(rep("," ~> expression)*)) ~ ")"
- def operands: Parser[List[Expression]] = "(" ~ opt(expression ~ rep("," ~> expression)) ~ ")".r ^^ {  
-   case "(" ~ None ~ ")" => List()  //Nil?
-   case "("~ Some(exp ~ Nil) ~")" => List(exp)
-   case "(" ~ Some(exp ~ more) ~ ")" => exp::more
- }
+ //"(" ~ (expression ~ opt(rep("," ~> expression)*)) ~ ")" 
+  def operands: Parser[List[Expression]] = "(" ~> opt(expression~rep("," ~> expression)) <~ ")" ^^ {
+      case None => Nil
+      case Some(exp ~ Nil) => List(exp)
+      case Some(exp ~ more) => exp::more
+  }
 }
