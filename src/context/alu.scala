@@ -133,18 +133,12 @@ object alu {
    
    def equals(args: List[Value]): Value = {  //CANNOT ASSUME TWO ELEMENTS 
      
-     if (args.length < 2) throw new JediException("equals must have at least two parameters")
-     /*
-     try {
-       if (args(0) == (args(1))) Boole(true)
-       else Boole(false)
-     } catch {
-       case e => Boole(false)  //return false if types are different 
-     }*/
+     if (args.length < 2 || args == Nil) throw new JediException("equals must have at least two parameters")
      else {
        def helper(head: Value, tail: List[Value], result: Boolean): Boolean = {
          if (result) {
-           if (head == tail.head) helper(head, tail.tail, result)
+           if (tail == Nil) result
+           else if (head == tail.head) helper(head, tail.tail, result)
            else helper(head, tail.tail, false)
          } else {
            result

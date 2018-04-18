@@ -33,10 +33,10 @@ class Jedi1Parsers extends RegexParsers {
    
    // conjunction ::= equality ~ ("&&" ~ equality)*
    
-   def conjunction: Parser[Expression] = equality ~ rep("&&" ~> equality) ^^ {
-     case con ~ Nil => con
-     case con ~ more => Conjunction(con::more)
-   }
+  def conjunction: Parser[Expression] = equality ~ rep("&&" ~> equality) ^^ {
+    case con ~ Nil => con
+    case con ~ more => Conjunction(con::more)
+  }
    
    // equality ::= inequality ~ ("==" ~ inequality)*
    
@@ -124,9 +124,9 @@ class Jedi1Parsers extends RegexParsers {
  
  // operands ::= "(" ~ (expression ~ ("," ~ expression)*)? ~ ")"
  //"(" ~ (expression ~ opt(rep("," ~> expression)*)) ~ ")" 
-  def operands: Parser[List[Expression]] = "(" ~> opt(expression~rep("," ~> expression)) <~ ")" ^^ {
-      case None => Nil
-      case Some(exp ~ Nil) => List(exp)
-      case Some(exp ~ more) => exp::more
-  }
+ def operands: Parser[List[Expression]] = "(" ~ opt(expression ~ rep("," ~> expression)) ~ ")" ^^ {
+   case "(" ~ None ~ ")" => Nil  
+   case "("~ Some(exp ~ Nil) ~")" => List(exp)
+   case "(" ~ Some(exp ~ more) ~ ")" => exp::more
+ }
 }
